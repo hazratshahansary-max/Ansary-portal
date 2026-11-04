@@ -1,0 +1,6 @@
+{
+  "name": "ANSARY - Knowledge, Literature, Technology & News",
+  "description": "Multilingual website and Progressive Web App (PWA) supporting Pashto, Dari, and English with news, library, poetry, educational articles, and project portfolios.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
