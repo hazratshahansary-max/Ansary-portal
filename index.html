@@ -3,14 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-    <title>ANSARY - Knowledge, Literature, Technology & News</title>
-    <meta name="description" content="Multilingual website and Progressive Web App (PWA) supporting Pashto, Dari, and English with news, library, poetry, educational articles, and project portfolios." />
-    
+    <title>ANSARY - Knowledge, Literature, Technology & News | انصاري</title>
+    <meta name="description" content="Official multilingual knowledge portal and Progressive Web App for ANSARY founded by Hazrat Shah Ansary. Featuring verified news, free digital library books, Afghan and Persian poetry, educational articles, and database architectures." />
+    <meta name="keywords" content="ANSARY, انصاري, انصاری, Hazrat Shah Ansary, حضرت شاه انصاري, پښتو کتابونه, کتابخانه افغانستان, شعر او ادب, افغانستان خبرونه, افغان ډیټابیس, د معلوماتو ټیکنالوژي, د پښتو شعرونه, Persian literature, Afghan news, database projects, PWA" />
+    <meta name="author" content="Hazrat Shah Ansary" />
+    <meta name="publisher" content="ANSARY" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
     <!-- OpenGraph Metadata -->
+    <meta property="og:site_name" content="ANSARY" />
     <meta property="og:title" content="ANSARY - Knowledge, Literature, Technology & News" />
-    <meta property="og:description" content="Multilingual portal and Progressive Web App for ANSARY featuring news, library, poetry, and projects." />
+    <meta property="og:description" content="Official multilingual portal and Progressive Web App for ANSARY featuring news, library books, poetry, and database project architectures." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="/pwa-512x512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="ANSARY Logo - Knowledge, Literature, Technology & News" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="ANSARY - Knowledge, Literature, Technology & News" />
     <meta name="twitter:description" content="Multilingual portal and Progressive Web App for ANSARY." />
@@ -32,6 +40,50 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Schema.org JSON-LD Structured Data for Google Search -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://cozy-pastelito-a842a4.netlify.app/#website",
+          "url": "https://cozy-pastelito-a842a4.netlify.app/",
+          "name": "ANSARY",
+          "alternateName": ["انصاري", "انصاری"],
+          "description": "Knowledge, Literature, Technology & News",
+          "inLanguage": ["ps", "fa", "en"]
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://cozy-pastelito-a842a4.netlify.app/#organization",
+          "name": "ANSARY",
+          "url": "https://cozy-pastelito-a842a4.netlify.app/",
+          "logo": "https://cozy-pastelito-a842a4.netlify.app/pwa-512x512.png",
+          "founder": {
+            "@type": "Person",
+            "name": "Hazrat Shah Ansary",
+            "jobTitle": "Principal Architect & Author",
+            "email": "hazrat.shah.ansary@gmail.com"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://cozy-pastelito-a842a4.netlify.app/#webapp",
+          "name": "ANSARY PWA",
+          "applicationCategory": "EducationalApplication, NewsApplication",
+          "operatingSystem": "All (Android, iOS, Windows, macOS, Linux)",
+          "browserRequirements": "Requires JavaScript",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      ]
+    }
+    </script>
   </head>
   <body class="bg-slate-50 text-slate-900 dark:bg-[#070D1E] dark:text-slate-100 antialiased min-h-screen selection:bg-amber-400/30 selection:text-amber-900 dark:selection:text-amber-200">
     <div id="root"></div>
