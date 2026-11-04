@@ -6,6 +6,9 @@ export const AUTHORIZED_ADMIN_EMAIL = 'hazrat.shah.ansary@gmail.com';
 let cachedClient: SupabaseClient | null = null;
 let currentClientKey = '';
 
+export const DEFAULT_SUPABASE_URL = 'https://kupuclyakicijgvumbdo.supabase.co';
+export const DEFAULT_SUPABASE_ANON_KEY = 'sb_publishable_BErOaZllmaIp0EePc8ATVw_30f_Cygs';
+
 export function getSupabaseCredentials(): { url: string; anonKey: string } {
   // Check env vars first
   const envUrl = (import.meta as unknown as { env: Record<string, string> }).env?.VITE_SUPABASE_URL || '';
@@ -21,7 +24,8 @@ export function getSupabaseCredentials(): { url: string; anonKey: string } {
     return { url: stored.url.trim(), anonKey: stored.anonKey.trim() };
   }
 
-  return { url: '', anonKey: '' };
+  // Active production credentials for Supabase project kupuclyakicijgvumbdo
+  return { url: DEFAULT_SUPABASE_URL, anonKey: DEFAULT_SUPABASE_ANON_KEY };
 }
 
 export function isSupabaseConfigured(): boolean {
