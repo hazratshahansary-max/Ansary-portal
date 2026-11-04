@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cozy-pastelito-a842a4.netlify.app/sitemap.xml
+Sitemap: https://ansary.netlify.app/sitemap.xml
