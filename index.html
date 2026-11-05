@@ -11,6 +11,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <title>ANSARY - Knowledge, Literature, Technology & News | انصاري</title>
+
     <meta name="description" content="Official multilingual knowledge portal and Progressive Web App for ANSARY founded by Hazrat Shah Ansary. Featuring verified news, free digital library books, Afghan and Persian poetry, educational articles, and database architectures." />
     <meta name="keywords" content="ANSARY, انصاري, انصاری, Hazrat Shah Ansary, حضرت شاه انصاري, پښتو کتابونه, کتابخانه افغانستان, شعر او ادب, افغانستان خبرونه, افغان ډیټابیس, د معلوماتو ټیکنالوژي, د پښتو شعرونه, Persian literature, Afghan news, database projects, PWA" />
     <meta name="author" content="Hazrat Shah Ansary" />
@@ -97,3 +98,115 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+<!-- د کتابونو، اډمین ترتیباتو او رسنیو نشر لپاره بشپړ اډمین کوډ -->
+<div class="admin-section" style="background: #161b22; padding: 20px; border-radius: 10px; margin-top: 20px; color: #fff;">
+    <h3>🛠️ د انصاري اډمین مدیریت او اپلوډ پینل</h3>
+
+    <!-- ۱. د کتابونو اپلوډ برخه -->
+    <div style="margin-bottom: 25px; border-bottom: 1px solid #30363d; padding-bottom: 15px;">
+        <h4>📚 د کتاب اپلوډ کول</h4>
+        <form id="adminBookForm">
+            <div style="margin-bottom: 10px;">
+                <label>د کتاب نوم:</label>
+                <input type="text" id="bookTitle" required style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>لیکوال:</label>
+                <input type="text" id="bookAuthor" style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>د کتاب فایل (PDF):</label>
+                <input type="file" id="bookFile" accept=".pdf" required style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;">
+            </div>
+            <button type="submit" style="background: #238636; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">کتاب اپلوډ کړۍ</button>
+        </form>
+    </div>
+
+    <!-- ۲. د اډمین او اړیکو ترتیبات (نمبر، ادرس، واټسآپ، ټیلیګرام) -->
+    <div style="margin-bottom: 25px; border-bottom: 1px solid #30363d; padding-bottom: 15px;">
+        <h4>⚙️ د اډمین او اړیکو تنظیمات</h4>
+        <form id="adminSettingsForm">
+            <div style="margin-bottom: 10px;">
+                <label>د ټلیفون نمبر:</label>
+                <input type="text" id="adminPhone" style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>ادرس (لکه ترینکوټ ګرماب مانده غاړه):</label>
+                <input type="text" id="adminAddress" style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>واټسآپ لینک/نمبر:</label>
+                <input type="text" id="adminWhatsapp" style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>ټیلیګرام لینک:</label>
+                <input type="text" id="adminTelegram" style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;">
+            </div>
+            <button type="submit" style="background: #238636; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">ترتیبات خوندي کړۍ</button>
+        </form>
+    </div>
+
+    <!-- ۳. د انځورونو او ویډیوګانو د نشر برخه -->
+    <div>
+        <h4>📷 د رسنیو نشر (عکس/ویډیو)</h4>
+        <form id="adminMediaForm">
+            <div style="margin-bottom: 10px;">
+                <label>متن ولیکئ:</label>
+                <textarea id="postText" rows="3" style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;"></textarea>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>انځور یا ویډیو وټاکئ:</label>
+                <input type="file" id="mediaFile" accept="image/*,video/*" style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;">
+            </div>
+            <button type="submit" style="background: #238636; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">نشر کړۍ</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // د کتابونو د اپلوډ جاوا سکریپټ منطق
+    document.getElementById('adminBookForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('bookTitle').value;
+        const author = document.getElementById('bookAuthor').value;
+        const fileInput = document.getElementById('bookFile').files[0];
+
+        if(!fileInput) return alert('لطفاً د کتاب فایل وټاکئ!');
+
+        const fileName = `${Date.now()}_${fileInput.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage.from('books').upload(fileName, fileInput);
+        
+        if(uploadError) {
+            alert('د فایل په اپلوډ کې تېروتنه وشوه: ' + uploadError.message);
+            return;
+        }
+
+        const file_url = `https://kupuclyakicijgvumbdo.supabase.co/storage/v1/object/public/books/${fileName}`;
+
+        const { error: dbError } = await supabase.from('books').insert([{ title, author, file_url }]);
+        
+        if(dbError) {
+            alert('ډاتابیس ته د درج کولو تېروتنه: ' + dbError.message);
+        } else {
+            alert('کتاب په بریا سره اپلوډ شو!');
+            document.getElementById('adminBookForm').reset();
+        }
+    });
+
+    // د ترتیباتو د ساتلو منطق
+    document.getElementById('adminSettingsForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const phone = document.getElementById('adminPhone').value;
+        const address = document.getElementById('adminAddress').value;
+        const whatsapp = document.getElementById('adminWhatsapp').value;
+        const telegram = document.getElementById('adminTelegram').value;
+
+        const { error } = await supabase.from('site_settings').upsert({ id: 1, phone, address, whatsapp, telegram });
+        
+        if(error) {
+            alert('تېروتنه: ' + error.message);
+        } else {
+            alert('ترتیبات په بریالیتوب سره تازه شول!');
+        }
+    });
+</script>
