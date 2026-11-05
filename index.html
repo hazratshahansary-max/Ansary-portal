@@ -210,3 +210,32 @@
         }
     });
 </script>
+// د انځورونو او ویډیوګانو د نشر منطق
+document.getElementById('adminMediaForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const caption = document.getElementById('postText').value;
+    const mediaInput = document.getElementById('mediaFile').files[0];
+
+    if(!mediaInput) return alert('لطفاً یو انځور یا ویډیو وټاکئ!');
+
+    const fileName = `media_${Date.now()}_${mediaInput.name}`;
+    const { data: uploadData, error: uploadError } = await supabase.storage.from('books').upload(fileName, mediaInput);
+    
+    if(uploadError) {
+        alert('د رسنۍ په اپلوډ کې تېروتنه وشوه: ' + uploadError.message);
+        return;
+    }
+
+    const media_url = `https://kupuclyakicijgvumbdo.supabase.co/storage/v1/object/public/books/${fileName}`;
+
+    // دلته فرض کوو چې د رسنیو لپاره مو 'posts' نومې جدول جوړ کړی دی
+    const { error: dbError } = await supabase.from('posts').insert([{ caption, media_url }]);
+    
+    if(dbError) {
+        alert('ډاتابیس ته د نشر درج کولو تېروتنه: ' + dbError.message);
+    } else {
+        alert('رسنۍ په بریالیتوب سره خپره شوه!');
+        document.getElementById('adminMediaForm').reset();
+    }
+});
+
