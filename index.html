@@ -238,4 +238,53 @@ document.getElementById('adminMediaForm').addEventListener('submit', async (e) =
         document.getElementById('adminMediaForm').reset();
     }
 });
+<!-- د کتاب د اپلوډ ځانګړی فورم -->
+<div style="background: #161b22; padding: 20px; border-radius: 10px; margin-top: 20px; color: #fff;">
+    <h3>📚 د کتاب اپلوډ او خپرولو برخه</h3>
+    <form id="adminBookForm">
+        <div style="margin-bottom: 10px;">
+            <label>د کتاب نوم:</label>
+            <input type="text" id="bookTitle" required style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;">
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label>لیکوال:</label>
+            <input type="text" id="bookAuthor" style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;">
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label>د کتاب فایل (PDF):</label>
+            <input type="file" id="bookFile" accept=".pdf" required style="width: 100%; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 5px;">
+        </div>
+        <button type="submit" style="background: #238636; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">کتاب اپلوډ او ثبت کړۍ</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('adminBookForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('bookTitle').value;
+        const author = document.getElementById('bookAuthor').value;
+        const fileInput = document.getElementById('bookFile').files[0];
+
+        if(!fileInput) return alert('لطفاً د کتاب فایل وټاکئ!');
+
+        const fileName = `${Date.now()}_${fileInput.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage.from('books').upload(fileName, fileInput);
+        
+        if(uploadError) {
+            alert('د فایل په اپلوډ کې تېروتنه وشوه: ' + uploadError.message);
+            return;
+        }
+
+        const file_url = `https://kupuclyakicijgvumbdo.supabase.co/storage/v1/object/public/books/${fileName}`;
+
+        const { error: dbError } = await supabase.from('books').insert([{ title, author, file_url }]);
+        
+        if(dbError) {
+            alert('ډاتابیس ته د درج کولو تېروتنه: ' + dbError.message);
+        } else {
+            alert('کتاب په بریا سره اپلوډ شو!');
+            document.getElementById('adminBookForm').reset();
+        }
+    });
+</script>
 
