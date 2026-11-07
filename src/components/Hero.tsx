@@ -1,170 +1,282 @@
-import React from 'react';
-import { Language, Post } from '../types';
-import { translations } from '../lib/i18n';
-import { PWAInstallButton } from './PWAInstallButton';
-import { ArrowRight, BookOpen, Newspaper, FolderGit2, Feather, Flame } from 'lucide-react';
+import React, { useState } from 'react';
+import { TRANSLATIONS } from '../data/translations';
+import { Language, Post, SiteSettings } from '../types';
+import { DEFAULT_HERO_BANNER } from '../assets/images';
+import {
+  Search,
+  BookOpen,
+  GraduationCap,
+  Sparkles,
+  ArrowRight,
+  ArrowLeft,
+  ChevronRight,
+  TrendingUp,
+  FileCheck2,
+  Users,
+  Layers,
+  Bell
+} from 'lucide-react';
 
-interface Props {
+interface HeroProps {
   language: Language;
   featuredPosts: Post[];
+  siteSettings: SiteSettings;
   onNavigate: (section: string) => void;
   onSelectPost: (post: Post) => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  totalBooks?: number;
 }
 
-export const Hero: React.FC<Props> = ({
+export const Hero: React.FC<HeroProps> = ({
   language,
   featuredPosts,
+  siteSettings,
   onNavigate,
   onSelectPost,
+  searchQuery,
+  onSearchChange,
+  totalBooks = 0
 }) => {
-  const t = translations[language];
+  const t = TRANSLATIONS[language];
+  const isRtl = language !== 'en';
+  const ArrowIcon = isRtl ? ArrowLeft : ArrowRight;
 
-  const leadPost = featuredPosts[0] || null;
+  const currentFeatured = featuredPosts.find(p => p.featured) || featuredPosts[0];
 
   return (
-    <section className="relative overflow-hidden pt-6 pb-12">
-      {/* Editorial Headline & Marquee Strip */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* News Ticker */}
-        {leadPost && (
-          <div className="mb-6 flex items-center gap-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 rounded-xl px-4 py-2 text-xs">
-            <span className="flex items-center gap-1.5 font-bold text-blue-700 dark:text-amber-400 shrink-0">
-              <Flame className="w-3.5 h-3.5" />
-              <span>{language === 'ps' ? 'تازه خبر:' : language === 'fa' ? 'خبر فوری:' : 'Breaking:'}</span>
-            </span>
+    <section className="relative overflow-hidden pt-6 pb-12 lg:pt-10 lg:pb-16 bg-gradient-to-b from-blue-50/60 via-white to-slate-50 dark:from-[#070D1E] dark:via-[#091329] dark:to-[#070D1E]">
+      {/* Background Decorative Polygons & Light Rings */}
+      <div className="absolute top-0 inset-x-0 h-96 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(59,130,246,0.15),transparent)] dark:bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(37,99,235,0.2),transparent)] pointer-events-none" />
+      <div className="absolute -top-32 right-1/4 w-96 h-96 bg-blue-400/10 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Emergency Alert / Announcement Ticker */}
+        {siteSettings.emergencyAlert && siteSettings.emergencyAlertActive && (
+          <div className="mb-6 flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-blue-900 to-indigo-950 text-white shadow-md border border-blue-400/30">
+            <div className="p-1.5 rounded-xl bg-amber-400/20 text-amber-300 shrink-0">
+              <Bell className="w-4 h-4 animate-bounce" />
+            </div>
+            <p className="text-xs sm:text-sm font-medium line-clamp-1 flex-1">
+              {siteSettings.emergencyAlert}
+            </p>
             <button
-              onClick={() => onSelectPost(leadPost)}
-              className="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-amber-300 font-medium truncate text-left [dir=rtl]:text-right transition"
+              onClick={() => onNavigate('library')}
+              className="text-xs font-bold text-amber-300 hover:text-amber-200 shrink-0 underline ml-2"
             >
-              {leadPost.title}
+              {language === 'ps' ? 'کتل' : language === 'fa' ? 'مشاهده' : 'View'}
             </button>
-            <span className="text-slate-400 font-mono text-[11px] shrink-0 hidden sm:inline">
-              {leadPost.date}
-            </span>
           </div>
         )}
 
-        {/* 2-Column Split Hero Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch mb-10">
-          {/* Main Visual & Lead Story (7 cols) */}
-          <div className="lg:col-span-7 flex flex-col justify-between rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl relative min-h-[420px] group">
-            {/* Background High-Fidelity Hero Image */}
-            <img
-              src="/src/assets/images/ansary_hero_banner_1793805838021.jpg"
-              alt="ANSARY Hero Banner"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              referrerPolicy="no-referrer"
-            />
-            {/* Scrim Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/20" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Main Column */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Pill Tag */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-100/80 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800/60 shadow-xs">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-amber-400" />
+              <span className="text-xs font-semibold text-blue-800 dark:text-blue-200">
+                {language === 'ps'
+                  ? 'د پوهې او معاصرو ټیکنالوژیو رسمي علمي مرکز'
+                  : language === 'fa'
+                  ? 'مرکز رسمی پژوهش‌های نوین، داده و ادبیات'
+                  : 'Official Multilingual Knowledge & Research Hub'}
+              </span>
+            </div>
 
-            {/* Content atop image */}
-            <div className="relative z-10 p-6 sm:p-8 flex flex-col justify-end h-full mt-auto">
-              {/* Unboxed Metadata */}
-              <div className="flex items-center gap-2 text-xs text-amber-300 font-medium mb-3">
-                <span>{t.brandName}</span>
-                <span aria-hidden="true">·</span>
-                <span>{t.slogan}</span>
-                <span aria-hidden="true">·</span>
-                <span>2026</span>
-              </div>
+            {/* Main Headline */}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.2]">
+              {language === 'ps' ? (
+                <>
+                  د پوهې، افغان ادب او <span className="text-blue-600 dark:text-blue-400 underline decoration-amber-400 decoration-wavy decoration-2">ډیټابیس ټیکنالوژۍ</span> خزانه
+                </>
+              ) : language === 'fa' ? (
+                <>
+                  گنجینه دانش، ادبیات کهن و <span className="text-blue-600 dark:text-blue-400 underline decoration-amber-400 decoration-wavy decoration-2">فناوری پایگاه‌های داده</span>
+                </>
+              ) : (
+                <>
+                  Empowering Wisdom, Afghan Literature &amp; <span className="text-blue-600 dark:text-blue-400 underline decoration-amber-400 decoration-wavy decoration-2">Modern Cloud Systems</span>
+                </>
+              )}
+            </h1>
 
-              <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight text-balance mb-4">
-                {leadPost ? leadPost.title : 'ANSARY: Knowledge, Literature, Technology & News'}
-              </h1>
+            {/* Subtitle */}
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
+              {language === 'ps'
+                ? 'د انصاري علمي پورتال د حضرت شاه انصاري له لوري رامنځته شوی ترڅو وړیا ډیجیټل کتابونه، مستند افغان خبرونه، کلاسیک شعرونه، او د لوړ ظرفیت کلاوډ ډیټابیسونو د معمارۍ نمونې ټولنې ته وړاندې کړي.'
+                : language === 'fa'
+                ? 'پورتال دانش انصاری تاسیس شده توسط حضرت شاه انصاری با هدف دسترسی همگانی به کتابخانه دیجیتال رایگان، اخبار تایید شده، شعر و ادب کهن، و الگوهای پیشرفته مهندسی پایگاه‌های داده کلاود.'
+                : 'Ansary Knowledge is an official open repository providing peer-reviewed digital books, verified news, classical poetry, and enterprise distributed database architectures.'}
+            </p>
 
-              <p className="text-sm text-slate-200 line-clamp-3 leading-relaxed mb-6 max-w-2xl">
-                {leadPost ? leadPost.excerpt : t.sections.latestNewsSub}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-3">
-                {leadPost && (
+            {/* Omnipresent Search Bar */}
+            <div className="relative max-w-xl">
+              <div className="flex items-center rounded-2xl border-2 border-blue-200 dark:border-blue-900 bg-white dark:bg-slate-900 shadow-lg shadow-blue-500/5 focus-within:border-blue-500 transition-all overflow-hidden p-1.5">
+                <div className="px-3 text-blue-600 dark:text-blue-400">
+                  <Search className="w-5 h-5" />
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => onSearchChange(e.target.value)}
+                  placeholder={(t.actions as any)?.searchPlaceholder || 'Search library, articles, poetry...'}
+                  className="w-full bg-transparent text-sm py-2 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none"
+                />
+                {searchQuery && (
                   <button
-                    onClick={() => onSelectPost(leadPost)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs shadow-lg transition active:scale-95"
+                    onClick={() => onSearchChange('')}
+                    className="px-2.5 py-1 text-xs text-slate-400 hover:text-slate-600"
                   >
-                    <span>{t.actions.readMore}</span>
-                    <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
+                    ✕
                   </button>
                 )}
                 <button
-                  onClick={() => onNavigate('projects')}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs backdrop-blur-md border border-white/20 transition active:scale-95"
+                  onClick={() => onNavigate('library')}
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shrink-0"
                 >
-                  <FolderGit2 className="w-3.5 h-3.5" />
-                  <span>{t.nav.projects}</span>
+                  {language === 'ps' ? 'پلټنه' : language === 'fa' ? 'جستجو' : 'Search'}
                 </button>
               </div>
             </div>
-          </div>
 
-          {/* Quick Curated Features (5 cols) */}
-          <div className="lg:col-span-5 flex flex-col gap-4 justify-between">
-            {/* Quick Pillars Grid */}
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => onNavigate('news')}
-                className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-amber-400 transition text-left [dir=rtl]:text-right group"
-              >
-                <div className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-3 group-hover:scale-110 transition-transform">
-                  <Newspaper className="w-5 h-5" />
-                </div>
-                <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">
-                  {t.nav.news}
-                </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">
-                  {t.sections.latestNewsSub}
-                </p>
-              </button>
-
+            {/* Quick Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-1">
               <button
                 onClick={() => onNavigate('library')}
-                className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-amber-400 transition text-left [dir=rtl]:text-right group"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all hover:translate-y-[-1px]"
               >
-                <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-3 group-hover:scale-110 transition-transform">
-                  <BookOpen className="w-5 h-5" />
-                </div>
-                <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">
-                  {t.nav.library}
-                </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">
-                  {t.sections.booksLibrarySub}
-                </p>
+                <BookOpen className="w-4 h-4" />
+                <span>{t.nav.library}</span>
+                <ArrowIcon className="w-3.5 h-3.5 opacity-80" />
               </button>
 
               <button
-                onClick={() => onNavigate('poetry')}
-                className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-amber-400 transition text-left [dir=rtl]:text-right group"
+                onClick={() => onNavigate('research')}
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-blue-200 dark:border-blue-800 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-800 text-blue-700 dark:text-blue-300 text-xs font-bold transition"
               >
-                <div className="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-950 flex items-center justify-center text-rose-600 dark:text-rose-400 mb-3 group-hover:scale-110 transition-transform">
-                  <Feather className="w-5 h-5" />
-                </div>
-                <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">
-                  {t.nav.poetry}
-                </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">
-                  {t.sections.poetryHeritageSub}
-                </p>
+                <GraduationCap className="w-4 h-4 text-blue-600 dark:text-amber-400" />
+                <span>{(t.nav as any).research || 'Research Papers'}</span>
               </button>
 
               <button
                 onClick={() => onNavigate('projects')}
-                className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-amber-400 transition text-left [dir=rtl]:text-right group"
+                className="inline-flex items-center gap-2 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs font-medium transition"
               >
-                <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-3 group-hover:scale-110 transition-transform">
-                  <FolderGit2 className="w-5 h-5" />
-                </div>
-                <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">
-                  {t.nav.projects}
-                </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">
-                  {t.sections.ourProjectsSub}
-                </p>
+                <Layers className="w-4 h-4 text-slate-400" />
+                <span>{t.nav.projects}</span>
               </button>
             </div>
+          </div>
 
-            {/* PWA Feature card */}
-            <PWAInstallButton language={language} variant="banner" />
+          {/* Featured Spotlight Card or Empty State */}
+          <div className="lg:col-span-5">
+            {currentFeatured ? (
+              <div className="relative rounded-3xl overflow-hidden bg-white dark:bg-[#0C1A32] border border-blue-100 dark:border-blue-900/60 shadow-xl shadow-blue-500/5 group hover:border-blue-300 dark:hover:border-blue-700 transition-all">
+                {/* Image / Banner */}
+                <div className="relative h-56 sm:h-64 overflow-hidden bg-slate-900">
+                  <img
+                    src={currentFeatured.coverImage || DEFAULT_HERO_BANNER}
+                    alt={currentFeatured.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={(e: any) => {
+                      e.target.src = DEFAULT_HERO_BANNER;
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/30 to-transparent" />
+                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-blue-600/90 text-white text-[11px] font-bold tracking-wider uppercase backdrop-blur-md">
+                    ★ {language === 'ps' ? 'ځانګړې خپرونه' : language === 'fa' ? 'برگزیده' : 'Featured Publication'}
+                  </span>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-3">
+                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                    <span>{currentFeatured.date}</span>
+                    <span className="font-semibold text-blue-600 dark:text-amber-400">
+                      {currentFeatured.author}
+                    </span>
+                  </div>
+
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
+                    {currentFeatured.title}
+                  </h3>
+
+                  <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                    {currentFeatured.excerpt}
+                  </p>
+
+                  <div className="pt-2 flex items-center justify-between">
+                    <button
+                      onClick={() => onSelectPost(currentFeatured)}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 group-hover:text-blue-700 transition"
+                    >
+                      <span>{(t.actions as any)?.readOnline || 'Read Full Publication'}</span>
+                      <ArrowIcon className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="text-[11px] text-slate-400">
+                      {currentFeatured.views} {language === 'ps' ? 'کتنې' : 'views'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="relative rounded-3xl overflow-hidden bg-white dark:bg-[#0C1A32] border border-blue-100 dark:border-blue-900/60 p-8 shadow-xl shadow-blue-500/5 text-center space-y-4">
+                <div className="w-16 h-16 mx-auto rounded-3xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-amber-400 flex items-center justify-center">
+                  <Sparkles className="w-8 h-8" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  {language === 'ps' ? 'د انصاري علمي خزانه چمتو ده' : language === 'fa' ? 'پورتال دانش انصاری آماده است' : 'Ansary Knowledge Ready'}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm mx-auto">
+                  {language === 'ps'
+                    ? 'دا برخه د لومړنۍ اصلي خپرونې لپاره چمتو ده. د اډمین پینل له لارې نوی خبر یا مقاله خپره کړئ.'
+                    : 'Ready for new verified publications. Dispatch your first publication via the Management Portal.'}
+                </p>
+                <button
+                  onClick={() => onNavigate('library')}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-xs"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>{t.nav.library}</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Live Metrics Row (Dynamically Calculated from Real Data) */}
+        <div className="mt-12 pt-8 border-t border-slate-200/80 dark:border-blue-950/80 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/80 text-center space-y-1">
+            <p className="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400 font-mono">
+              {featuredPosts.length}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              {language === 'ps' ? 'علمي او تخصصي خپرونې' : language === 'fa' ? 'مقالات و نشریات تخصصی' : 'Publications & News'}
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/80 text-center space-y-1">
+            <p className="text-2xl sm:text-3xl font-extrabold text-indigo-600 dark:text-amber-400 font-mono">
+              {totalBooks}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              {language === 'ps' ? 'وړیا ډیجیټل کتابونه' : language === 'fa' ? 'کتب دیجیتال رایگان' : 'Free Digital Books'}
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/80 text-center space-y-1">
+            <p className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">100%</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              {language === 'ps' ? 'خپلواک او مستند محتوا' : language === 'fa' ? 'محتوای موثق و تایید شده' : 'Verified Open Access'}
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/80 text-center space-y-1">
+            <p className="text-2xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-300 font-mono">3 ژبې</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              {language === 'ps' ? 'پښتو، دري او انګلیسي' : language === 'fa' ? 'پشتو، دری و انگلیسی' : 'Pashto, Dari & English'}
+            </p>
           </div>
         </div>
       </div>

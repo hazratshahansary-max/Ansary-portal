@@ -1,104 +1,102 @@
+/**
+ * Ansary Knowledge - Main Application Entry
+ * Official multilingual knowledge portal, digital library, poetry archive, and database architecture showcase.
+ * Founded by Hazrat Shah Ansary.
+ */
+
 import React, { useState, useEffect } from 'react';
+import { Language, Post, Book, PoetryItem, VideoItem, ProjectItem, ResearchPaper, SiteSettings } from './types';
 import {
-  Language,
-  Post,
-  Book,
-  Poetry,
-  VideoItem,
-  Project,
-} from './types';
-import {
-  initStorage,
-  subscribeStorage,
+  initializeStorage,
+  subscribeToStorage,
   getPosts,
   getBooks,
   getPoetry,
   getVideos,
   getProjects,
-  trackPageView,
+  getResearchPapers,
+  getSiteSettings,
+  trackSectionView
 } from './lib/storage';
-import { getDir } from './lib/i18n';
+import { getDirection } from './data/translations';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { NewsSection } from './components/NewsSection';
 import { LibrarySection } from './components/LibrarySection';
+import { ResearchSection } from './components/ResearchSection';
 import { PoetrySection } from './components/PoetrySection';
 import { VideosSection } from './components/VideosSection';
+import { ArticlesSection } from './components/ArticlesSection';
 import { ProjectsSection } from './components/ProjectsSection';
-import { AboutMeSection } from './components/AboutMeSection';
+import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
-import { AdminDashboard } from './components/AdminDashboard';
-import { ItemDetailModal } from './components/ItemDetailModal';
-import { OfflineIndicator } from './components/OfflineIndicator';
 import { Footer } from './components/Footer';
+import { PostModal } from './components/PostModal';
+import { AdminModal } from './components/AdminModal';
+import { OfflineBanner } from './components/OfflineBanner';
 
 export default function App() {
-  // Initialize storage once on mount
+  // 1. Initialize Storage & Service Worker
   useEffect(() => {
-    initStorage();
+    initializeStorage();
 
-    // Register PWA service worker if available in navigator
-    if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
+    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
       navigator.serviceWorker
         .register('/sw.js')
-        .then((reg) => console.log('ANSARY ServiceWorker registered:', reg.scope))
-        .catch((err) => console.log('ANSARY ServiceWorker registration failed:', err));
+        .then(reg => console.log('Ansary Knowledge ServiceWorker registered:', reg.scope))
+        .catch(err => console.log('Ansary Knowledge ServiceWorker registration note:', err));
     }
   }, []);
 
-  // Language state (defaults to Pashto per regional requirement, with quick toggle to Dari and English)
+  // 2. State & Language Preferences
   const [language, setLanguage] = useState<Language>(() => {
-    const saved = localStorage.getItem('ansary_language') as Language;
+    const saved = localStorage.getItem('ansary_language');
     return saved === 'ps' || saved === 'fa' || saved === 'en' ? saved : 'ps';
   });
 
-  // Dark mode state
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem('ansary_theme');
     if (saved) return saved === 'dark';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return true; // Default to rich modern dark mode
   });
 
-  // Navigation state
-  const [currentSection, setCurrentSection] = useState('home');
-
-  // Admin Modal state
-  const [adminOpen, setAdminOpen] = useState(false);
-
-  // Selected Post for Full Detail Modal
+  const [currentSection, setCurrentSection] = useState<string>('home');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [selectedProjectForInquiry, setSelectedProjectForInquiry] = useState<ProjectItem | null>(null);
 
-  // Selected Project for Contact Inquiry
-  const [inquiryProject, setInquiryProject] = useState<Project | null>(null);
-
-  // Reactive Data
+  // Content state loaded from LocalStorage (with Supabase backup)
   const [posts, setPosts] = useState<Post[]>(() => getPosts());
   const [books, setBooks] = useState<Book[]>(() => getBooks());
-  const [poetryList, setPoetryList] = useState<Poetry[]>(() => getPoetry());
+  const [poetryList, setPoetryList] = useState<PoetryItem[]>(() => getPoetry());
   const [videos, setVideos] = useState<VideoItem[]>(() => getVideos());
-  const [projects, setProjects] = useState<Project[]>(() => getProjects());
+  const [projects, setProjects] = useState<ProjectItem[]>(() => getProjects());
+  const [researchPapers, setResearchPapers] = useState<ResearchPaper[]>(() => getResearchPapers());
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => getSiteSettings());
 
-  // Subscribe to storage updates
+  // Subscribe to storage changes
   useEffect(() => {
-    const unsubscribe = subscribeStorage(() => {
+    return subscribeToStorage(() => {
       setPosts(getPosts());
       setBooks(getBooks());
       setPoetryList(getPoetry());
       setVideos(getVideos());
       setProjects(getProjects());
+      setResearchPapers(getResearchPapers());
+      setSiteSettings(getSiteSettings());
     });
-    return unsubscribe;
   }, []);
 
-  // Update HTML document attributes on language change
+  // Sync Language & RTL direction
   useEffect(() => {
     localStorage.setItem('ansary_language', language);
-    const dir = getDir(language);
+    const dir = getDirection(language);
     document.documentElement.setAttribute('dir', dir);
     document.documentElement.setAttribute('lang', language);
   }, [language]);
 
-  // Update Dark mode class on root element
+  // Sync Dark Mode class
   useEffect(() => {
     localStorage.setItem('ansary_theme', darkMode ? 'dark' : 'light');
     if (darkMode) {
@@ -108,11 +106,11 @@ export default function App() {
     }
   }, [darkMode]);
 
+  // Section Navigation Handler
   const handleNavigate = (sectionId: string) => {
     setCurrentSection(sectionId);
-    trackPageView(sectionId);
+    trackSectionView(sectionId);
 
-    // Scroll smoothly to target element
     const el = document.getElementById(sectionId);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -121,17 +119,17 @@ export default function App() {
     }
   };
 
-  const handleInquireProject = (project: Project) => {
-    setInquiryProject(project);
+  const handleInquireProject = (project: ProjectItem) => {
+    setSelectedProjectForInquiry(project);
     handleNavigate('contact');
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#070D1E] text-slate-900 dark:text-slate-100 transition-colors">
-      {/* Offline Status Toast */}
-      <OfflineIndicator language={language} />
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#070D1E] text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      {/* Offline Toast */}
+      <OfflineBanner language={language} />
 
-      {/* Top Bar Header */}
+      {/* Global Header */}
       <Header
         currentSection={currentSection}
         onNavigate={handleNavigate}
@@ -139,90 +137,111 @@ export default function App() {
         onLanguageChange={setLanguage}
         darkMode={darkMode}
         onToggleDarkMode={() => setDarkMode(!darkMode)}
-        onOpenAdmin={() => setAdminOpen(true)}
+        onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenSearch={() => {
+          handleNavigate('home');
+          const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+          if (searchInput) searchInput.focus();
+        }}
       />
 
-      {/* Main Content Sections */}
+      {/* Main Content Area */}
       <main className="flex-1">
-        {/* 1. Hero Section & Marquee */}
+        {/* 1. Hero Showcase with Search & Metrics */}
         <Hero
           language={language}
           featuredPosts={posts}
+          totalBooks={books.length}
+          siteSettings={siteSettings}
           onNavigate={handleNavigate}
-          onSelectPost={(post) => setSelectedPost(post)}
+          onSelectPost={post => setSelectedPost(post)}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
         />
 
-        {/* 2. Latest News */}
+        {/* 2. Latest News & Domestic Analysis */}
         <NewsSection
           posts={posts}
           language={language}
-          onSelectPost={(post) => setSelectedPost(post)}
-          sectionType="news"
+          onSelectPost={post => setSelectedPost(post)}
+          searchFilter={searchQuery}
         />
 
-        {/* 3. Books & Library */}
+        {/* 3. Maktaba Digital Library (PDFs & Books) */}
         <LibrarySection
           books={books}
           language={language}
+          onOpenAdminUpload={() => setIsAdminOpen(true)}
+          searchFilter={searchQuery}
         />
 
-        {/* 4. Poetry & Cultural Heritage */}
+        {/* 4. NEW: Scientific Research & Technical Whitepapers */}
+        <ResearchSection
+          papers={researchPapers}
+          language={language}
+          searchFilter={searchQuery}
+        />
+
+        {/* 5. Poetry & Classical Cultural Heritage */}
         <PoetrySection
           poetryList={poetryList}
           language={language}
+          searchFilter={searchQuery}
         />
 
-        {/* 5. Featured Videos */}
+        {/* 6. Video Academy & Lecture Series */}
         <VideosSection
           videos={videos}
           language={language}
         />
 
-        {/* 6. Articles & Educational Information */}
-        <NewsSection
+        {/* 7. Educational & Software Architecture Articles */}
+        <ArticlesSection
           posts={posts}
           language={language}
-          onSelectPost={(post) => setSelectedPost(post)}
-          sectionType="articles"
+          onSelectPost={post => setSelectedPost(post)}
+          searchFilter={searchQuery}
         />
 
-        {/* 7. Our Projects (Database Advertisements & Portfolios) */}
+        {/* 8. Enterprise Database Architectures & Systems */}
         <ProjectsSection
           projects={projects}
           language={language}
           onInquire={handleInquireProject}
         />
 
-        {/* 8. About Me (Hazrat Shah Ansary) */}
-        <AboutMeSection
+        {/* 9. Founder Biography & Qualifications */}
+        <AboutSection
           language={language}
           onContactClick={() => handleNavigate('contact')}
         />
 
-        {/* 9. Contact Us */}
+        {/* 10. Contact Coordinates & Inquiries */}
         <ContactSection
           language={language}
-          selectedProject={inquiryProject}
+          siteSettings={siteSettings}
+          selectedProject={selectedProjectForInquiry}
         />
       </main>
 
-      {/* Footer */}
+      {/* Global Footer */}
       <Footer
         language={language}
         onNavigate={handleNavigate}
-        onOpenAdmin={() => setAdminOpen(true)}
+        onOpenAdmin={() => setIsAdminOpen(true)}
       />
 
-      {/* Modals */}
-      <ItemDetailModal
+      {/* Reader Modal for Articles & Publications */}
+      <PostModal
         post={selectedPost}
         onClose={() => setSelectedPost(null)}
         language={language}
       />
 
-      <AdminDashboard
-        isOpen={adminOpen}
-        onClose={() => setAdminOpen(false)}
+      {/* Admin Management Suite & Upload Portal */}
+      <AdminModal
+        isOpen={isAdminOpen}
+        onClose={() => setIsAdminOpen(false)}
         language={language}
         posts={posts}
         books={books}
