@@ -1,21 +1,22 @@
+/**
+ * Core Type Definitions for Ansary Knowledge
+ * Preserves 100% compatibility with existing Supabase schema and LocalStorage structures.
+ */
+
 export type Language = 'ps' | 'fa' | 'en';
-
-export type PostType = 'news' | 'article';
-
-export type NewsCategory = 'sports' | 'domestic' | 'international' | 'announcements';
 
 export interface Post {
   id: string;
   slug: string;
-  type: PostType;
-  category: NewsCategory;
+  type: 'news' | 'articles' | 'article' | 'analysis';
+  category: 'sports' | 'domestic' | 'technology' | 'international' | 'education' | 'culture' | 'announcements' | string;
   title: string;
   excerpt: string;
   content: string;
   language: Language;
   author: string;
   date: string;
-  coverImage?: string;
+  coverImage: string;
   tags: string[];
   likes: number;
   dislikes: number;
@@ -28,33 +29,36 @@ export interface Book {
   id: string;
   title: string;
   author: string;
-  description: string;
   coverImage: string;
-  pdfUrl?: string;
-  language: Language;
   pages: number;
-  publicationYear: number;
+  year?: number;
+  publicationYear?: number;
   category: string;
+  schoolGrade?: number;
+  language: Language;
+  fileUrl?: string;
+  pdfUrl?: string;
   downloads: number;
   likes: number;
   dislikes: number;
-  fileSize: string;
+  fileSize?: string;
+  description?: string;
 }
 
-export interface PoetryVerse {
+export interface VersePair {
   line1: string;
   line2: string;
 }
 
-export interface Poetry {
+export interface PoetryItem {
   id: string;
   title: string;
   poet: string;
-  era?: string;
-  verses: PoetryVerse[];
+  era: string;
+  verses: VersePair[];
   language: Language;
-  genre: string; // e.g., Ghazal, Rubai, Qasida
-  explanation?: string;
+  genre: string;
+  explanation: string;
   audioUrl?: string;
   likes: number;
   dislikes: number;
@@ -75,7 +79,7 @@ export interface VideoItem {
   category: string;
 }
 
-export interface Project {
+export interface ProjectItem {
   id: string;
   title: string;
   shortDescription: string;
@@ -86,9 +90,9 @@ export interface Project {
   contactInfo: {
     email: string;
     phone: string;
-    leadEngineer?: string;
+    leadEngineer: string;
   };
-  databaseType: string; // e.g. PostgreSQL, Supabase, TimescaleDB, Cloud SQL
+  databaseType: string;
   securityNotice: string;
   likes: number;
   dislikes: number;
@@ -96,16 +100,41 @@ export interface Project {
   demoUrl?: string;
 }
 
-export interface Comment {
+export interface CommentItem {
   id: string;
   targetId: string;
-  targetType: 'post' | 'book' | 'poetry' | 'video' | 'project';
+  targetType: 'post' | 'book' | 'poetry' | 'video' | 'project' | 'research';
   authorName: string;
   authorEmail?: string;
   content: string;
   createdAt: string;
   status: 'approved' | 'pending' | 'rejected';
   likes: number;
+}
+
+export interface ResearchPaper {
+  id: string;
+  title: string;
+  abstract: string;
+  field: string;
+  author: string;
+  institution: string;
+  publishDate: string;
+  readTime: string;
+  downloadUrl?: string;
+  language: Language;
+  citations: number;
+  doi?: string;
+  keywords: string[];
+}
+
+export interface SiteSettings {
+  phone: string;
+  address: string;
+  whatsapp: string;
+  telegram: string;
+  emergencyAlert?: string;
+  emergencyAlertActive?: boolean;
 }
 
 export interface AnalyticsData {
@@ -117,13 +146,15 @@ export interface AnalyticsData {
   appDownloads: number;
   activeUsers: number;
   sectionViews: Record<string, number>;
-  languageCounts: Record<Language, number>;
-  history: Array<{ date: string; views: number; visitors: number }>;
+  languageCounts: Record<string, number>;
+  history: Array<{
+    date: string;
+    views: number;
+    visitors: number;
+  }>;
 }
 
 export interface SupabaseConfig {
   url: string;
   anonKey: string;
-  isConnected: boolean;
-  lastTested?: string;
 }

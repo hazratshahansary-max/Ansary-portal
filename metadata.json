@@ -1,6 +1,6 @@
 {
-  "name": "ANSARY - Knowledge, Literature, Technology & News",
-  "description": "Multilingual website and Progressive Web App (PWA) supporting Pashto, Dari, and English with news, library, poetry, educational articles, and project portfolios.",
+  "name": "Ansary Knowledge",
+  "description": "Official multilingual knowledge portal, digital library, poetry archive, technology research, and publication platform founded by Hazrat Shah Ansary.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

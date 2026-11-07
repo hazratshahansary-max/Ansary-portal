@@ -1,0 +1,11 @@
+Cloudflare Pages settings
+
+Framework preset: None
+Build command: npm run build
+Build output directory: dist
+Root directory: /
+Production branch: main
+
+Important: This package is the full ANSARY KNOWLEDGE portal source extracted from the nested project archive. Keep a backup of the current GitHub repository before replacing its files.
+
+After deploying, test the main sections, mobile menu, language switcher, admin panel, and Supabase-backed features. Supabase credentials may need to be configured separately as environment variables/secrets.
