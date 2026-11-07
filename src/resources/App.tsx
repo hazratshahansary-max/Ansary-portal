@@ -45,7 +45,15 @@ import {
 
 export default function App() {
   const [currentLang, setCurrentLang] = useState<Language>(getStoredLanguage());
-  const [activeTab, setActiveTab] = useState<ActiveTab>('prompts');
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
+  const tab = new URLSearchParams(window.location.search).get('tab');
+
+  if (tab === 'links' || tab === 'favorites') {
+    return tab;
+  }
+
+  return 'prompts';
+});
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [prompts, setPrompts] = useState<PromptItem[]>([]);
   const [links, setLinks] = useState<LinkItem[]>([]);
