@@ -1,0 +1,31 @@
+name: Test ANSARY Website Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - combined-version
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+        with:
+          ref: combined-version
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build website
+        run: npm run build
